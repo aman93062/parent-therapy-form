@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Therapy Application</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #dbeafe, #f3e8ff);
+  color: #1f2937;
+  padding: 25px 15px;
+}
+
+.card {
+  max-width: 650px;
+  margin: 20px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px #00000015;
+}
+
+h1 {
+  text-align: center;
+  color: #4f46e5;
+  margin-bottom: 10px;
+}
+
+.intro {
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+h2 {
+  color: #6d28d9;
+  font-size: 18px;
+  margin: 24px 0 15px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+}
+
+input:focus, select:focus {
+  outline: 2px solid #c4b5fd;
+  border-color: #7c3aed;
+}
+
+.group {
+  margin-bottom: 17px;
+}
+
+button {
+  width: 100%;
+  border: none;
+  padding: 14px;
+  background: #6d28d9;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5b21b6;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+#status {
+  margin-top: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.note {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 18px;
+}
+
+@media (max-width: 500px) {
+  .card {
+    padding: 22px 17px;
+  }
+}
+</style>
+</head>
+
+<body>
+<main class="card">
+  <h1>Therapy Application</h1>
+  <p class="intro">
+    Parents can use this form to request a therapy appointment.
+  </p>
+
+  <form id="therapyForm">
+    <h2>Parent Information</h2>
+
+    <div class="group">
+      <label for="parentName">Parent / Guardian Name *</label>
+      <input id="parentName" name="parentName"
+             required minlength="2" maxlength="100">
+    </div>
+
+    <div class="group">
+      <label for="phone">Phone Number *</label>
+      <input id="phone" name="phone" type="tel"
+             inputmode="numeric" pattern="[0-9]{10}"
+             maxlength="10" placeholder="10-digit number" required>
+    </div>
+
+    <div class="group">
+      <label for="email">Email Address (optional)</label>
+      <input id="email" name="email" type="email"
+             maxlength="150">
+    </div>
+
+    <h2>Child Information</h2>
+
+    <div class="group">
+      <label for="childAge">Child's Age *</label>
+      <input id="childAge" name="childAge" type="number"
+             min="1" max="17" step="1" required>
+    </div>
+
+    <h2>Appointment Details</h2>
+
+    <div class="group">
+      <label for="therapy">Type of Therapy *</label>
+      <select id="therapy" name="therapy" required>
+        <option value="">Select a type</option>
+        <option>Child Counselling</option>
+        <option>Family Therapy</option>
+        <option>Behavioural Support</option>
+        <option>Learning Support</option>
+        <option>Stress Management</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label for="appointmentDate">Preferred Date *</label>
+      <input id="appointmentDate" name="appointmentDate"
+             type="date" required>
+    </div>
+
+    <div class="group">
+      <label for="sessionType">Session Preference *</label>
+      <select id="sessionType" name="sessionType" required>
+        <option value="">Select a preference</option>
+        <option>Online</option>
+        <option>In-person</option>
+      </select>
+    </div>
+
+    <button id="submitButton" type="submit">
+      Submit Application
+    </button>
+
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <p class="note">
+      This form requests an appointment; submission does not confirm a booking.
+      Please do not enter sensitive medical details here. Use a secure,
+      privacy-protected system for children's counselling records.
+    </p>
+  </form>
+</main>
+
+<script>
+const WEB_APP_URL =
+  "https://script.google.com/macros/s/AKfycbzrAiq2U2CJLlyYicmGA6GNTWMMdZVeetrCU4NTrOYVKwCmW5IzveAcAy1kV2Ky_Yv6/exec";
+
+const form = document.getElementById("therapyForm");
+const statusBox = document.getElementById("status");
+const submitButton = document.getElementById("submitButton");
+const dateField = document.getElementById("appointmentDate");
+
+function todayLocal() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+dateField.min = todayLocal();
+
+form.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  statusBox.textContent = "";
+  statusBox.style.color = "#b91c1c";
+
+  if (WEB_APP_URL === "PASTE_YOUR_WEB_APP_URL_HERE") {
+    statusBox.textContent =
+      "Please configure your Google Apps Script Web app URL first.";
+    return;
+  }
+
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  if (dateField.value < todayLocal()) {
+    statusBox.textContent = "Please select today or a future date.";
+    return;
+  }
+
+  const data = {
+    parentName: document.getElementById("parentName").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    childAge: document.getElementById("childAge").value,
+    therapy: document.getElementById("therapy").value,
+    appointmentDate: dateField.value,
+    sessionType: document.getElementById("sessionType").value
+  };
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+
+  try {
+    /*
+      Google Apps Script web apps can accept this request
+      without a JSON preflight when using text/plain.
+      no-cors mode does not let the browser read the response,
+      so it cannot confirm that the row was saved.
+    */
+    await fetch(WEB_APP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(data)
+    });
+
+    statusBox.style.color = "#047857";
+    statusBox.textContent =
+      "Submission sent. Please verify the entry in your Google Sheet; " +
+      "the browser cannot confirm that it was saved.";
+
+    form.reset();
+    dateField.min = todayLocal();
+
+  } catch (error) {
+    statusBox.textContent =
+      "Could not send the request. Check your internet connection and Web app URL.";
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Submit Application";
+  }
+});
+</script>
+</body>
+</html>
